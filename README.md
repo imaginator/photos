@@ -7,39 +7,45 @@ What we care about:
 - Title of the photo (used to generate the Album). EG Cape Town Trip 2020
 - Comments: Rarely used but the option to annotate a photo
 - lat/long (where the photo was taken
-- date: when it was taken.
-- email address in photos
+- date: when it was taken `XMP-xmp:CreateDate`
+`- email address in photos
 - face data
+see: https://github.com/exiftool/exiftool/blob/master/arg_files/exif2xmp.args 
 
 ### fields not to care about
 - Do not use ITPC fileds
-
+- Makernotes?
 
 ## Validate files
 
 start with the real fuckups:
 ```
-exiftool -r -p '$directory/$filename' -if 'not $exif:all'           -ext jpg /srv/photos/originals
+exiftool -r -p '$directory/$filename' -if '(not $exif:all)'        -ext jpg /srv/photos/originals
 exiftool -r -p '$directory/$filename' -if '(not $datetimeoriginal)'-ext jpg  /srv/photos/originals
 ```
 
-Files missing XMP group data
+Files missing XMP data area
 ```
-exiftool -r -p                     '$directory/$filename' -if 'not $xmp:all'                     /srv/photos/originals
-exiftool -r -p -overwrite_original '$directory/$filename' -if 'not $xmp:all' '-all>xmp:all'     /srv/photos/originals/
+exiftool -r                     -p '$directory/$filename' -if 'not $xmp:all'                /srv/photos/originals
+exiftool -r -overwrite_original -p '$directory/$filename' -if 'not $xmp:all' '-all>xmp:all' /srv/photos/originals
 ```
 
 Sometimes DateTimeDigitized disagrees
 ```
 # check for mismatches
-exiftool -r -if '$DateTimeOriginal !~ $DateTimeDigitized'  -p '$directory/$filename'  /srv/photos/originals/
-
 # fix (AllDates only affects three tags, DateTimeOriginal, ModifyDate, and CreateDate.)
-exiftool -vr -overwrite_original '-alldates<datetimeoriginal' '-XMP:alldates<datetimeoriginal'  /srv/photos/originals/1999
+
+exiftool -r -if '$DateTimeOriginal !~ $DateTimeDigitized'  -p '$createdate $DateTimeDigitized $directory/$filename'  /srv/photos/originals/ 
+exiftool -r -overwrite_original -p '$directory/$filename' -if '$DateTimeOriginal !~ $DateTimeDigitized' '-alldates<datetimeoriginal' '-XMP:alldates<datetimeoriginal'  /srv/photos/originals/1999
+for videos this can be useful 
+exiftool -r -overwrite_original -p '$directory/$filename' -if '$DateTimeOriginal !~ $DateTimeDigitized' '-alldates<xmp:datecreated' '-XMP:alldates<xmp:datecreated' '-xmp:HistoryWhen=' '-xmp:DateTimeDigitized<xmp:datecreated' /srv/photos/originals/
 ```
 
 Find missing Subject
-exiftool -r -if '(not $subject)' -p '$directory/$filename' -ext jpg /srv/photos/originals
+exiftool -r -if '(not $Title)' -p '$directory/$filename' -ext jpg /srv/photos/originals
+Fix Videos missing their Title:
+exiftool -r "-title<${directory;s(.*/)()}" DIR
+
 
 
 Exiftool write current file name to Title and Comment EXIF fields:
@@ -81,4 +87,4 @@ Exiftool add CreateDate Exif Property and Copy DateTimeOriginal Exif Property Va
 
 Useful for if many pictures do not have the CreateDate exif-property, but do have the DateTimeOriginal exif-property. If you want the CreateDate exif-property to have the same value as the DateTimeOriginal exif property:
 
-exiftool -overwrite_original '-createdate<datetimeoriginal' -r -if '(not $createdate and $datetimeoriginal)' <your directory>
+exiftool -r -overwrite_original -if '(not $createdate and $datetimeoriginal)' '-createdate<datetimeoriginal'   <your directory>
