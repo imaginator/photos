@@ -19,21 +19,40 @@ What we care about:
 
 start with the real fuckups:
 ```
-exiftool -r -if 'not $exif:all'           -p '$directory/$filename' -ext jpg /srv/photos/originals
-exiftool -r -if '(not $datetimeoriginal)' -p '$directory/$filename' -ext jpg /srv/photos/originals
+exiftool -r -p '$directory/$filename' -if 'not $exif:all'           -ext jpg /srv/photos/originals
+exiftool -r -p '$directory/$filename' -if '(not $datetimeoriginal)'-ext jpg  /srv/photos/originals
 ```
 
-#check for mismatches
+Files missing XMP group data
+```
+exiftool -r -p                     '$directory/$filename' -if 'not $xmp:all'                     /srv/photos/originals
+exiftool -r -p -overwrite_original '$directory/$filename' -if 'not $xmp:all' '-all>xmp:all'     /srv/photos/originals/
+```
+
+Sometimes DateTimeDigitized disagrees
+```
+# check for mismatches
 exiftool -r -if '$DateTimeOriginal !~ $DateTimeDigitized'  -p '$directory/$filename'  /srv/photos/originals/
+
 # fix (AllDates only affects three tags, DateTimeOriginal, ModifyDate, and CreateDate.)
 exiftool -vr -overwrite_original '-alldates<datetimeoriginal' '-XMP:alldates<datetimeoriginal'  /srv/photos/originals/1999
-exiftool -v  '-datetimeoriginal<${filename;$_=substr($_,0,15)}' '-createdate<${filename;$_=substr($_,0,15)}' '-FileCreateDate<${filename;$_=substr($_,0,15)}' '-FileModifyDate<${filename;$_=substr($_,0,15)}' '-MetaDataDate<${filename;$_=substr($_,0,15)}' '-ModifyDate<${filename;$_=substr($_,0,15)}' -ext jpg  /srv/photos/originals/2002/2002\ 12\ 28\ Dec\ 2012/2012-12-25\ 07\ 52\ 34-1.jpg 
+```
 
+Find missing Subject
+exiftool -r -if '(not $subject)' -p '$directory/$filename' -ext jpg /srv/photos/originals
+
+
+Exiftool write current file name to Title and Comment EXIF fields:
+
+exiftool -r -overwrite_original "-xpcomment<${filename" "-comment<${filename" "-title<${filename" "-xptitle<${filename" .
+
+
+# useful for fixing video files:
+exiftool -v  '-datetimeoriginal<${filename;$_=substr($_,0,15)}' '-createdate<${filename;$_=substr($_,0,15)}' '-FileCreateDate<${filename;$_=substr($_,0,15)}' '-FileModifyDate<${filename;$_=substr($_,0,15)}' '-MetaDataDate<${filename;$_=substr($_,0,15)}' '-ModifyDate<${filename;$_=substr($_,0,15)}' '-XMP:alldates<${filename;$_=substr($_,0,15)}' -ext jpg  /srv/photos/originals/2002/2002\ 12\ 28\ Dec\ 2012/2012-12-25\ 07\ 52\ 34-1.jpg 
+```
 
 
 exiftool -r -if 'not $Iptc:Caption-Abstract' -p 'ImageDescription missing in $directory/$filename'  /srv/photos/originals/1999
-
-# fix bad digitization date
 
 # confirm 
 exiftool -G0:1 -time:all /srv/photos/originals/1998/1998\ 12\ 2005\ 07\ 02\ London\ with\ Ulrika/DSCN0271.jpg 
