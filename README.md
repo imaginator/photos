@@ -24,6 +24,12 @@ exiftool -r -p '$directory/$filename' -if '(not $exif:all)'        -ext jpg /srv
 exiftool -r -p '$directory/$filename' -if '(not $datetimeoriginal)'-ext jpg  /srv/photos/originals
 ```
 
+fixing timestamps
+```
+
+```
+
+
 Files missing XMP data area
 ```
 exiftool -r                     -p '$directory/$filename' -if 'not $xmp:all'                /srv/photos/originals
@@ -54,7 +60,7 @@ exiftool -r -overwrite_original "-xpcomment<${filename" "-comment<${filename" "-
 
 
 # useful for fixing video files:
-exiftool -v  '-datetimeoriginal<${filename;$_=substr($_,0,15)}' '-createdate<${filename;$_=substr($_,0,15)}' '-FileCreateDate<${filename;$_=substr($_,0,15)}' '-FileModifyDate<${filename;$_=substr($_,0,15)}' '-MetaDataDate<${filename;$_=substr($_,0,15)}' '-ModifyDate<${filename;$_=substr($_,0,15)}' '-XMP:alldates<${filename;$_=substr($_,0,15)}' -ext jpg  /srv/photos/originals/2002/2002\ 12\ 28\ Dec\ 2012/2012-12-25\ 07\ 52\ 34-1.jpg 
+exiftool -r -v -overwrite_original  '-datetimeoriginal<${filename;$_=substr($_,0,15)}' '-createdate<${filename;$_=substr($_,0,15)}' '-FileCreateDate<${filename;$_=substr($_,0,15)}' '-FileModifyDate<${filename;$_=substr($_,0,15)}' '-MetaDataDate<${filename;$_=substr($_,0,15)}' '-ModifyDate<${filename;$_=substr($_,0,15)}' '-XMP:alldates<${filename;$_=substr($_,0,15)}' -ext jpg  /srv/photos/originals/2002/2002\ 12\ 28\ Dec\ 2012/2012-12-25\ 07\ 52\ 34-1.jpg 
 ```
 
 
