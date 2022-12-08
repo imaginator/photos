@@ -16,6 +16,11 @@ see: https://github.com/exiftool/exiftool/blob/master/arg_files/exif2xmp.args
 - Do not use ITPC fileds
 - Makernotes?
 
+# Perfect files should pass the following tests:
+exiftool -r -p '$directory/$filename' -if '(not $xmp:title)'       /srv/photos/originals
+exiftool -r -p '$directory/$filename' -if '(not $xmp:datecreated)' /srv/photos/originals
+
+
 ## Validate files
 
 start with the real fuckups:
@@ -28,6 +33,13 @@ fixing timestamps
 ```
 
 ```
+
+fixing copyright:
+```
+exiftool  -P -OwnerName='Simon Tennant' -XMP-dc:Creator='Simon Tennant' -XMP-iptcCore:CreatorWorkURL='http://imaginator.com' -XMP-iptcCore:CreatorWorkEmail='simon@imaginator.com' -d %Y -XMP-dc:Rights'<Copyright © $createdate Simon Tennant, all rights reserved.' /srv/photos/originals/
+
+```
+
 
 
 Files missing XMP data area
@@ -94,3 +106,9 @@ Exiftool add CreateDate Exif Property and Copy DateTimeOriginal Exif Property Va
 Useful for if many pictures do not have the CreateDate exif-property, but do have the DateTimeOriginal exif-property. If you want the CreateDate exif-property to have the same value as the DateTimeOriginal exif property:
 
 exiftool -r -overwrite_original -if '(not $createdate and $datetimeoriginal)' '-createdate<datetimeoriginal'   <your directory>
+
+Move to the right directory 
+```
+# will overwrite existing files with the same name (not really an issue so far) 
+exiftool  -r  -o dummy/  '-filename<CreateDate' -d '/srv/photos/originals/simon_photos/%Y/%m/%%f.%%e' /srv/photos/originals/inbox  > out 2>error
+```
