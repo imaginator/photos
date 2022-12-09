@@ -1,0 +1,38 @@
+# convert the filename to a date
+
+# Recursive
+-r
+
+# Show processed filenames
+-v0
+
+# Attempt to modify media only if the info doesn't already exist
+-if
+(not $xmp:Date) or (not $xmp:DateTimeOriginal) or (not $xmp:DateCreated) or (not $xmp:CreateDate) or ($Filetype eq "JPEG" and not $exif:DateTimeOriginal) or ($Filetype eq "PNG" and not $PNG:CreationTime)
+
+# fix the most important timestamps (Time:All is too verbose)
+-AllDates<${filename;$_=substr($_,0,15)}
+
+# let exiftool do it's thing
+-DateCreated<${filename;$_=substr($_,0,15)}
+-DateTimeCreated<${filename;$_=substr($_,0,15)}
+-DateTimeOriginal<${filename;$_=substr($_,0,15)}
+
+# mostly we care about XMP as the reference source
+-xmp:Date<${filename;$_=substr($_,0,15)}
+-xmp:CreateDate<${filename;$_=substr($_,0,15)}
+-xmp:DateTimeCreated<${filename;$_=substr($_,0,15)}
+-xmp:DateTimeOriginal<${filename;$_=substr($_,0,15)}
+
+# PNG-specific
+-XMP-Exif:DateTimeOriginal<${filename;$_=substr($_,0,15)}
+-PNG:CreationTime<${filename;$_=substr($_,0,15)}
+
+# Quicktime / MP4. Assume that timestamp is in UTC.
+-QuickTime:TrackCreateDate<${filename;$_=substr($_,0,15)}
+-QuickTime:TrackModifyDate<${filename;$_=substr($_,0,15)}
+-QuickTime:MediaCreateDate<${filename;$_=substr($_,0,15)}
+-QuickTime:MediaModifyDate<${filename;$_=substr($_,0,15)}
+
+# Clobber everything
+-overwrite_original

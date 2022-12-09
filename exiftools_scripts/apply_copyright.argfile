@@ -1,0 +1,20 @@
+# Ensure the owner is on each file
+
+# Recursive
+-r
+
+# Show processed filenames
+-v0
+
+# for copyright year
+-d
+%Y
+
+-ownername=Simon Tennant
+-xmp-dc:creator=Simon Tennant
+-xmp-iptccore:creatorworkurl=http://imaginator.com
+-xmp-iptccore:creatorworkemail=simon@imaginator.com
+-xmp-dc:rights<Copyright © $DateTimeOriginal Simon Tennant, all rights reserved.
+
+# Clobber everything
+-overwrite_original

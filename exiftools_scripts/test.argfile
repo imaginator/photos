@@ -1,0 +1,18 @@
+# Test files for completeness
+
+# Recursive
+-r
+
+# Show processed filenames
+-v0
+
+# check dates
+-if
+(not $xmp:DateTimeOriginal) and ($Filetype eq "JPEG" and not $exif:DateTimeOriginal)
+
+-p 'bad dates: $directory/$filename'
+
+-if 
+(not $Title) 
+
+-p 'title missing: $directory/$filename'

@@ -1,0 +1,18 @@
+# Change random directories to year/month structure
+
+# Recursive
+-r
+
+# Show processed filenames
+-v0
+
+# This flag is to copy, not move. 
+# The directory is a fallback if the flag isn't available on the given photo. 
+# Good if using something like DateTimeOriginal
+# -o
+# ./real-fucksups/
+
+-Filename<${datetimeoriginal}
+
+-d
+/home/simon/Downloads/simon_photos/%Y/%m/%%f.%%e

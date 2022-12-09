@@ -4,17 +4,49 @@
 
 What we care about:
 
-- Title of the photo (used to generate the Album). EG Cape Town Trip 2020
-- Comments: Rarely used but the option to annotate a photo
-- lat/long (where the photo was taken
-- date: when it was taken `XMP-xmp:CreateDate`
-`- email address in photos
-- face data
-see: https://github.com/exiftool/exiftool/blob/master/arg_files/exif2xmp.args 
+Mandatory
+- xmp:Title EG Cape Town Trip 2020
+- xmp:Date
+- xmp:CreateDate
+- xmp:DateTimeCreated
+- xmp:DateTimeOriginal
+- xmp-dc:creator=Simon Tennant
+- xmp-iptccore:creatorworkurl=http://imaginator.com
+- xmp-iptccore:creatorworkemail=simon@imaginator.com
+- xmp-dc:rights=Copyright © $DateTimeOriginal Simon Tennant, all rights reserved.
 
-### fields not to care about
-- Do not use ITPC fileds
-- Makernotes?
+Optional:
+- xmp:Description: Rarely used but the option to annotate a photo
+- lat/long (where the photo was taken
+- face data see: https://github.com/exiftool/exiftool/blob/master/arg_files/exif2xmp.args 
+
+### process for Google Takeout 
+based on https://github.com/kaytat/exiftool-scripts-for-takeout
+```
+cd Downloads
+tar xfzv takeout-20221208T113828Z-001.tgz
+tar xfzv takeout-20221208T113828Z-002.tgz
+...
+
+# now is a good time to remove everything other than 
+# "Photos from <year>"
+# since albums (subdirectories) are a duplicate of the timeline
+
+# apply google JSON to files
+exiftool -@ use_json.argfile ~/Downloads/Takeout
+
+# but some don't have an accompanying JSON file so we have to pull from filenames
+exiftool -@ filename_to_date.argfile ~/Downloads/Takeout
+
+# apply copyright text (depends on DateTimeOriginal having been set)
+exiftool -@ file_copyright.argfile ~/Downloads/Takeout 
+
+# move files into year/month hierachy
+exiftool -@ sort_by_year_month.argfile ~/Downloads/Takeout
+
+# check non-moved files (probably corrupt)
+rsync -av  ~/Downloads/simon_photos simon@bunker.imagilan:/srv/photos/originals/new-google-takeout
+
 
 ### tag names
 My one other piece of advice is to not worry about the group namespace, such as XMP-photoshop, XMP-dc, XMP-iptcCore, etc.  Just keep it simple, like XMP:TAGNAME and let exiftool figure out the proper place to put it.

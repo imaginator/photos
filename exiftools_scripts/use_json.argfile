@@ -1,0 +1,66 @@
+# Fill in from Google's JSON
+
+# Look at all media files and ignore JSON
+--ext
+json
+
+# Recursive
+-r
+
+# Show processed filenames
+-v0
+
+# Check if the corresponding JSON exists
+-if
+(-e "${Directory}/${Filename}".".json")
+
+# Attempt to modify media only if the info doesn't already exist
+-if
+(not $xmp:Date) or (not $xmp:DateTimeOriginal) or (not $xmp:DateCreated) or (not $xmp:CreateDate)
+
+# Attempt to read in the JSON
+-tagsfromfile
+%d%F.json
+
+#
+# Write out the tags. Use ConvertUnixTime to try and convert the UTC timestamp
+# to a reasonable local EXIF string.
+#
+
+# fix the most important timestamps (Time:All is too verbose)
+-AllDates<${PhotoTakenTimeTimestamp;$_=ConvertUnixTime($_,1)}
+
+# let exiftool do it's thing
+-DateCreated<${PhotoTakenTimeTimestamp;$_=ConvertUnixTime($_,1)} 
+-DateTimeCreated<${PhotoTakenTimeTimestamp;$_=ConvertUnixTime($_,1)}
+-DateTimeOriginal<${PhotoTakenTimeTimestamp;$_=ConvertUnixTime($_,1)}
+
+# mostly we care about XMP as the reference source
+-xmp:Date<${PhotoTakenTimeTimestamp;$_=ConvertUnixTime($_,1)}
+-xmp:CreateDate<${PhotoTakenTimeTimestamp;$_=ConvertUnixTime($_,1)} 
+-xmp:DateTimeCreated<${PhotoTakenTimeTimestamp;$_=ConvertUnixTime($_,1)}
+-xmp:DateTimeOriginal<${PhotoTakenTimeTimestamp;$_=ConvertUnixTime($_,1)}
+
+# GPS
+-GPSAltitude*<GeoDataAltitude
+-GPSLatitude*<GeoDataLatitude
+-GPSLongitude*<GeoDataLongitude
+
+# Tags
+-Keywords<Tags
+-Subject<Tags
+-Caption-Abstract<Description
+-ImageDescription<Description
+
+# PNG-specific
+-XMP-Exif:DateTimeOriginal<${PhotoTakenTimeTimestamp;$_=ConvertUnixTime($_,1)}
+-PNG:CreationTime<${PhotoTakenTimeTimestamp;$_=ConvertUnixTime($_,1)}
+
+# Quicktime / MP4. Assume that timestamp is in UTC.
+-QuickTime:TrackCreateDate<${PhotoTakenTimeTimestamp;$_=ConvertUnixTime($_,0)}
+-QuickTime:TrackModifyDate<${PhotoTakenTimeTimestamp;$_=ConvertUnixTime($_,0)}
+-QuickTime:MediaCreateDate<${PhotoTakenTimeTimestamp;$_=ConvertUnixTime($_,0)}
+-QuickTime:MediaModifyDate<${PhotoTakenTimeTimestamp;$_=ConvertUnixTime($_,0)}
+
+# Clobber everything
+-overwrite_original
