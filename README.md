@@ -16,17 +16,21 @@ see: https://github.com/exiftool/exiftool/blob/master/arg_files/exif2xmp.args
 - Do not use ITPC fileds
 - Makernotes?
 
-# Perfect files should pass the following tests:
-exiftool -r -p '$directory/$filename' -if '(not $xmp:title)'       /srv/photos/originals
-exiftool -r -p '$directory/$filename' -if '(not $xmp:datecreated)' /srv/photos/originals
+### tag names
+My one other piece of advice is to not worry about the group namespace, such as XMP-photoshop, XMP-dc, XMP-iptcCore, etc.  Just keep it simple, like XMP:TAGNAME and let exiftool figure out the proper place to put it.
 
+### Perfect files should pass the following tests:
+```
+exiftool -r -p '$directory/$filename' -if '(not $xmp:title)'            /srv/photos/originals
+exiftool -r -p '$directory/$filename' -if '(not $xmp:datetimeoriginal)' /srv/photos/originals
+```
 
 ## Validate files
 
 start with the real fuckups:
 ```
 exiftool -r -p '$directory/$filename' -if '(not $exif:all)'        -ext jpg /srv/photos/originals
-exiftool -r -p '$directory/$filename' -if '(not $datetimeoriginal)'-ext jpg  /srv/photos/originals
+exiftool -r -p '$directory/$filename' -if '(not $datetimeoriginal)'-ext jpg /srv/photos/originals
 ```
 
 fixing timestamps
@@ -34,12 +38,17 @@ fixing timestamps
 
 ```
 
+# remove all IPTC-IIM tags
+exiftool -r  -overwrite_original   -p '$directory/$filename' -if '$IPTCDigest'  -IPTCDigest=     /srv/photos/originals     
+
+
+
 fixing copyright:
 ```
 exiftool  -P -OwnerName='Simon Tennant' -XMP-dc:Creator='Simon Tennant' -XMP-iptcCore:CreatorWorkURL='http://imaginator.com' -XMP-iptcCore:CreatorWorkEmail='simon@imaginator.com' -d %Y -XMP-dc:Rights'<Copyright © $createdate Simon Tennant, all rights reserved.' /srv/photos/originals/
 
 ```
-
+exiftool -r -overwrite_original -p '$directory/$filename' -if '$IPTCDigest' '-IPTCDigest=' /srv/photos/originals
 
 
 Files missing XMP data area
