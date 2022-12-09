@@ -6,15 +6,18 @@
 # Show processed filenames
 -v0
 
+-if
+(not $xmp:creator or not $xmp:ownerName or not $xmp:creatorworkemail or not $xmp:creatorworkurl or not $xmp:rights)
+
 # for copyright year
 -d
 %Y
 
--ownername=Simon Tennant
--xmp-dc:creator=Simon Tennant
--xmp-iptccore:creatorworkurl=http://imaginator.com
--xmp-iptccore:creatorworkemail=simon@imaginator.com
--xmp-dc:rights<Copyright © $DateTimeOriginal Simon Tennant, all rights reserved.
+-xmp:Creator=Simon Tennant
+-xmp:OwnerName=Simon Tennant
+-xmp:CreatorWorkEmail=simon@imaginator.com
+-xmp:CreatorWorkURL=https://imaginator.com
+-xmp:Rights<Copyright © $FileModifyDate Simon Tennant, all rights reserved.
 
 # Clobber everything
 -overwrite_original
