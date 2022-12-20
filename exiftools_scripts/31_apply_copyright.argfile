@@ -1,0 +1,25 @@
+# Ensure the owner is on each file
+# requires a valid DateTimeOriginal to have been set.
+
+# Recursive
+-r
+
+# Show processed filenames
+-v0
+
+# for copyright year
+-d
+%Y
+
+#-if
+#(not $xmp:Rights eq 'Copyright © '.${xmp:DateTimeOriginal}.' Name, all rights reserved.')
+# or not $xmp:creator eq 'Simon Tennant' or not $xmp:ownerName eq 'Simon Tennant' or not $xmp:creatorworkemail eq 'simon@imaginator.com' or not $xmp:creatorworkurl eq 'https://imaginator.com' )
+
+-xmp:Rights<Copyright © $xmp:DateTimeOriginal Simon Tennant, all rights reserved.
+-xmp:Creator=Simon Tennant
+-xmp:OwnerName=Simon Tennant
+-xmp:CreatorWorkEmail=simon@imaginator.com
+-xmp:CreatorWorkURL=https://imaginator.com
+
+# Clobber everything
+-overwrite_original

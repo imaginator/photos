@@ -1,0 +1,10 @@
+# check xmp:DateTimeOriginal
+
+# Recursive
+-r
+
+# Show processed filenames
+-v0
+
+-p
+'$xmp:DateTimeOriginal $directory/$filename'

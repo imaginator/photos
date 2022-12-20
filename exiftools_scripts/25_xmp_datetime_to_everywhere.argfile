@@ -1,0 +1,48 @@
+# copy the compond datetimeoriginal to xmp:DateTimeOriginal
+
+# Recursive
+-r
+
+-ext
+jpg
+-ext
+png
+-ext
+tiff
+-ext
+mov
+-ext
+mp4
+
+# Show processed filenames
+-v0
+
+# check xmp:DateTimeOriginal is there
+-if
+(defined $xmp:DateTimeOriginal)
+
+# fix the most important timestamps (Time:All is too verbose)
+-AllDates<$xmp:DateTimeOriginal
+-CreateDate<$xmp:DateTimeOriginal
+-DateCreated<$xmp:DateTimeOriginal
+-DateTimeCreated<$xmp:DateTimeOriginal
+-DateTimeDigitized<$xmp:DateTimeOriginal
+-DateTimeOriginal<$xmp:DateTimeOriginal
+
+# mostly we care about XMP as the reference source
+-xmp:Date<$xmp:DateTimeOriginal
+-xmp:CreateDate<$xmp:DateTimeOriginal
+-xmp:DateTimeCreated<$xmp:DateTimeOriginal
+
+# PNG-specific
+-XMP-Exif:DateTimeOriginal<$xmp:DateTimeOriginal
+-PNG:CreationTime<$xmp:DateTimeOriginal
+
+# Quicktime / MP4. Assume that timestamp is in UTC.
+-QuickTime:TrackCreateDate<$xmp:DateTimeOriginal
+-QuickTime:TrackModifyDate<$xmp:DateTimeOriginal
+-QuickTime:MediaCreateDate<$xmp:DateTimeOriginal
+-QuickTime:MediaModifyDate<$xmp:DateTimeOriginal
+
+# Clobber everything
+-overwrite_original

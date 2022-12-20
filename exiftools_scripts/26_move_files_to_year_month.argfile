@@ -9,10 +9,11 @@
 # This flag is to copy, not move. 
 # The directory is a fallback if the flag isn't available on the given photo. 
 # Good if using something like DateTimeOriginal
-# -o
-# ./real-fucksups/
+# needs a trailing "/" to signify a directory 
+-o
+./duplicates/
 
--Filename<${datetimeoriginal}
+-dateFormat
+/srv/photos/originals/%Y/%m
 
--d
-/home/simon/Downloads/simon_photos/%Y/%m/%%f.%%e
+-Directory<xmp:DateTimeOriginal

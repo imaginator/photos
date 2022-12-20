@@ -1,0 +1,26 @@
+# copy the compond datetimeoriginal to xmp:DateTimeOriginal
+
+# Recursive
+-r
+
+# only movies
+
+-ext
+mp4
+-ext
+mov
+
+-ext
+m4v
+
+# Show processed filenames
+-v0
+
+# check xmp:DateTimeOriginal is there
+-if
+(not defined $xmp:DateTimeOriginal)
+
+-xmp:DateTimeOriginal<$quicktime:MediaCreateDate
+
+# Clobber everything
+-overwrite_original

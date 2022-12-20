@@ -1,0 +1,27 @@
+# copy the compond datetimeoriginal to xmp:DateTimeOriginal
+
+# Recursive
+-r
+
+-ext
+jpg
+-ext
+png
+-ext
+tiff
+-ext
+mov
+-ext
+mp4
+
+# Show processed filenames
+-v0
+
+# check xmp:DateTimeOriginal is there
+-if
+(not defined $xmp:DateTimeOriginal)
+
+-xmp:DateTimeOriginal<$DateTimeOriginal
+
+# Clobber everything
+-overwrite_original
